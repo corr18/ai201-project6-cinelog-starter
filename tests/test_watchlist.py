@@ -81,3 +81,16 @@ def test_add_to_watchlist_nonexistent_film_raises(app, sample_user):
 
         # Confirm nothing was written
         assert WatchlistEntry.query.filter_by(user_id=sample_user).count() == 0
+
+
+# ── Default visibility ───────────────────────────────────────────────────────
+
+def test_add_to_watchlist_defaults_to_private(app, sample_user, sample_film):
+    """
+    New watchlist entries should be private (public=False) unless the
+    user explicitly opts in. See Comment 4 in pr-response.md.
+    """
+    with app.app_context():
+        entry = add_to_watchlist(user_id=sample_user, film_id=sample_film)
+
+        assert entry.public is False
