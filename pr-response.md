@@ -8,7 +8,7 @@ Claude Code also drafted the factual entries for Comments 1, 2, 3, and 6. I revi
 
 For Comments 4 and 5, I developed the design positions around default visibility and watchlist sorting, considering the intended behavior of CineLog as a community film-tracking application. ChatGPT was used to help formulate and refine the written explanations and evaluate potential reviewer counterarguments. In particular, the privacy-versus-discoverability tradeoff and the difference between finding a specific film and viewing recent additions were considered when refining the decisions.
 
-All final decisions and explanations should reflect my understanding of the project and the reasoning behind the implementation choices.
+All final decisions and explanations reflect my understanding of the project and the reasoning behind the implementation choices.
 
 ## Comment 1: Rename
 
@@ -77,6 +77,8 @@ I also think this is the right precedent to establish because watchlists are the
 
 The downside is that default-private watchlists could reduce discoverability and community engagement. Users who expect their lists to be visible may not realize they need to change the setting, which could make it harder for others to discover films through shared watchlists. This primarily affects users who want to participate in the community and share their interests without having to adjust additional settings. However, I think that is a reasonable tradeoff because users can intentionally make their lists public, whereas automatically exposing someone's interests gives them less control over their information.
 
+This PR does not yet give users a way to set `public=True`, because the add endpoint takes only `film_id`. Adding an explicit opt-in control (a `public` field on `POST /watchlist/<user_id>/add`, or a separate update endpoint) is the planned follow-up. Until then, the private default is the safe state.
+
 **Code change:** `WatchlistEntry.public` now has `default=False` in `models.py`. `test_add_to_watchlist_defaults_to_private` asserts that a new entry is private.
 
 Commits: `fix: default watchlist entries to private`, `test: add test for private default visibility in add_to_watchlist`
@@ -129,9 +131,12 @@ Commit: `fix: update watchlist film_id references to UUID after main branch refa
 
 After cleanup with `git rebase -i origin/main`, the original commit `added watchlist model and endpoint fixed a bug more changes` was reworded to conventional format, and the `.gitignore` commit was moved to the front.
 
-<!-- TODO (you): replace with your screenshot, e.g. ![git log --oneline](docs/git-log.png) -->
+![git log --oneline on feature/watchlist](docs/git-log.png)
+
+The topmost `docs:` commits (adding this file and this screenshot) are cropped out of the image. The full list is in the text block above.
 
 ```
+docs: add git log screenshot and visibility follow-up note to pr-response.md
 docs: add pr-response.md with review responses and design decisions
 test: add test for get_watchlist newest-first sort order
 fix: sort watchlist by date added, newest first
